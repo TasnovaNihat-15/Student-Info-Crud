@@ -25,48 +25,45 @@ app.get("/",(req,res)=>{
 
 
 
-app.post("/create", (req, res) => {
-    console.log("Body:", req.body);
-
+app.post('/create', (req, res) => {
     const sql = "INSERT INTO student (name, email) VALUES (?, ?)";
-    const values = [req.body.name, req.body.email];
+
+    const values = [
+        req.body.name,
+        req.body.email
+    ];
 
     db.query(sql, values, (err, result) => {
         if (err) {
             console.log(err);
             return res.json(err);
         }
-        console.log("Inserted Successfully");
+
         return res.json(result);
     });
 });
 
 app.put('/update/:id', (req, res) => {
-    console.log("Body:", req.body);
+    const sql = "UPDATE student SET name = ?, email = ? WHERE id = ?";
 
-   const sql = "Update student set Name = ? Email = ? where ID = ? ";
-    const values = [req.body.name, req.body.email];
-    const id = req.params.id;
-
-    db.query(sql, [...values,id], (err, result) => {
-        if (err) {
-            console.log(err);
-            return res.json(err);
+    db.query(
+        sql,
+        [req.body.name, req.body.email, req.params.id],
+        (err, result) => {
+            if (err) return res.json(err);
+            return res.json(result);
         }
-        console.log("Inserted Successfully");
+    );
+});
+
+app.delete('/delete/:id', (req, res) => {
+    const sql = "DELETE FROM student WHERE id = ?";
+
+    db.query(sql, [req.params.id], (err, result) => {
+        if (err) return res.json(err);
         return res.json(result);
     });
 });
-
-app.delete('/student/:id', (req, res) => {
-    const sql = "DELETE FROM student WHERE ID = ?";
-    const id = req.params.id;
-
-    db.query(sql, [id], (err, data) => {
-        if(err) return res.json("Error");
-        return res.json(data);
-    })
-})
 
 app.listen(8081, ()=>{
    console.log("listening") ;
